@@ -27,5 +27,5 @@ The system focuses on achieving high code reusability and type safety using adva
 
 ***
 
-| **Name** | Sanchit Yadav |
-| **Roll Number** | 2401010162 |
+| **Name** | Rohit Kumar |
+| **Roll Number** | 2401010255 |
