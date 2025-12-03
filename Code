@@ -1,0 +1,133 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    static class Student {
+        int rollNo;
+        String name;
+        String email;
+        String course;
+        double marks;
+
+        Student(int rollNo, String name, String email, String course, double marks) {
+            this.rollNo = rollNo;
+            this.name = name;
+            this.email = email;
+            this.course = course;
+            this.marks = marks;
+        }
+
+        @Override
+        public String toString() {
+            return "Roll No: " + rollNo +
+                   "\nName: " + name +
+                   "\nEmail: " + email +
+                   "\nCourse: " + course +
+                   "\nMarks: " + marks + "\n";
+        }
+    }
+
+    static List<Student> students = new ArrayList<>();
+    static final String FILE_NAME = "students.txt";
+
+    public static void loadStudents() {
+        try (BufferedReader br = new BufferedReader(new FileReader(FILE_NAME))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 5) {
+                    int roll = Integer.parseInt(parts[0].trim());
+                    String name = parts[1].trim();
+                    String email = parts[2].trim();
+                    String course = parts[3].trim();
+                    double marks = Double.parseDouble(parts[4].trim());
+                    students.add(new Student(roll, name, email, course, marks));
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("No existing file found, starting fresh.");
+        }
+    }
+
+    public static void saveStudents() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
+            for (Student s : students) {
+                bw.write(s.rollNo + "," + s.name + "," + s.email + "," + s.course + "," + s.marks);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error saving file.");
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        loadStudents();
+        boolean running = true;
+
+        while (running) {
+            System.out.println("Capstone Student Menu");
+            System.out.println("1. Add Student");
+            System.out.println("2. View All Students");
+            System.out.println("3. Search by Name");
+            System.out.println("4. Delete by Name");
+            System.out.println("5. Sort by Marks");
+            System.out.println("6. Save and Exit");
+            System.out.print("Enter choice: ");
+            int choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Roll No: ");
+                    int roll = sc.nextInt(); sc.nextLine();
+                    System.out.print("Enter Name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter Email: ");
+                    String email = sc.nextLine();
+                    System.out.print("Enter Course: ");
+                    String course = sc.nextLine();
+                    System.out.print("Enter Marks: ");
+                    double marks = sc.nextDouble(); sc.nextLine();
+                    students.add(new Student(roll, name, email, course, marks));
+                    System.out.println("Student added.\n");
+                    break;
+
+                case 2:
+                    for (Student s : students) System.out.println(s);
+                    break;
+
+                case 3:
+                    System.out.print("Enter Name to search: ");
+                    String searchName = sc.nextLine();
+                    for (Student s : students) {
+                        if (s.name.equalsIgnoreCase(searchName)) System.out.println(s);
+                    }
+                    break;
+
+                case 4:
+                    System.out.print("Enter Name to delete: ");
+                    String delName = sc.nextLine();
+                    students.removeIf(s -> s.name.equalsIgnoreCase(delName));
+                    System.out.println("Deleted if found.\n");
+                    break;
+
+                case 5:
+                    students.sort(Comparator.comparingDouble(stu -> stu.marks));
+                    System.out.println("Sorted by Marks.\n");
+                    for (Student s : students) System.out.println(s);
+                    break;
+
+                case 6:
+                    saveStudents();
+                    System.out.println("Saved and exiting.");
+                    running = false;
+                    break;
+
+                default:
+                    System.out.println("Invalid choice.\n");
+            }
+        }
+        sc.close();
+    }
+}
